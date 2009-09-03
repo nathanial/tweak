@@ -1,0 +1,31 @@
+<project name="pancakes-seed" default="run">
+  <target name="init">
+    <mkdir dir="build" />
+  </target>
+  <target name="clean">
+    <delete dir="build" />
+  </target>
+  <target name="build" depends="clean,init">
+    <copy todir="build">
+      <fileset dir="src">
+	<include name="**/**" />
+      </fileset>
+    </copy>
+    <jar file="build/pancakes-seed.jar">
+      <fileset dir="build">
+	<include name="**/**" />
+      </fileset>
+    </jar>
+  </target>
+  <target name="run" depends="build">
+    <java classname="clojure.lang.Repl" fork="true">
+      <classpath>
+	<fileset dir="lib">
+	  <include name="**/**" />
+	</fileset>
+	<pathelement path="build/pancakes-seed.jar" />
+      </classpath>      
+      <arg value="src/main.clj" />
+    </java>
+  </target>
+</project>
