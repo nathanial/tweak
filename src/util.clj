@@ -1,5 +1,15 @@
 (ns util)
 
+(def once-agent (agent nil))
+
+(defmacro once [& body]
+  `(let [fun# (fn [_#] ~@body)]
+     (send (agent nil) fun#)))
+
+(defmacro once-blocking [& body]
+  `(let [fun# (fn [_#] ~@body)]
+     (send-off (agent nil) fun#)))
+
 (defn guard [condition msg]
   (when (not condition)
     (throw (new RuntimeException msg))))
@@ -15,3 +25,4 @@
   (if (keyword? key)
     (.substring (str key) 1)
     key))
+
