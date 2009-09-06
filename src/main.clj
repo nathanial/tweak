@@ -1,8 +1,3 @@
-(ns main
-  (:require dataset table swing))
+(ns main)
 
-(table/start-application)
-(table/populate-from-dataset 
- (dataset/create-with-file 
-  {:date :_ :project "teledrill" :hours :_ :rate 18}
-  "data/hours.clj"))
+(load-file "/home/nathan/.pancakes")

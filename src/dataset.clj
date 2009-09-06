@@ -42,3 +42,9 @@
 (defn column-count [dataset]
   (let [row (first dataset)]
     (count row)))
+
+(defn dmerge [& datasets]
+  (with-meta 
+   (to-vector
+    (apply concat datasets))
+   {:template (-> datasets first meta (get :template))}))

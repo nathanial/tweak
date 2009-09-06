@@ -42,9 +42,14 @@ this avoid some overhead"
 
 (def *parent* nil)
 
+(defmacro with-parent [widget & body]
+  `(binding [*parent* ~widget]
+     ~@body))
+
+
 (defmacro frame [widget]  
-  `(let [frame# (JFrame. )]
-     (binding [*parent* frame#]
+  `(let [frame# (javax.swing.JFrame.)]
+     (with-parent frame#
        (doto frame#
 	 (.setSize 500, 500))
        (.. frame# (getContentPane) (add ~widget))
@@ -52,15 +57,19 @@ this avoid some overhead"
        (.setVisible frame# true)
        frame#)))
 
-(defn scroll-pane [widget]
-  (let [pane (JScrollPane. widget)]
-    pane))
+(defmacro scroll-pane [widget]
+  `(let [pane# (javax.swing.JScrollPane.)]
+     (when (= (class *parent*) JFrame)
+       (.setPreferredSize pane# (.getSize *parent*)))
+     (with-parent pane#
+       (.. pane# (getViewport) (setView ~widget)))
+     pane#))
 
 (defn on-enter [widget fun]
   (.addActionListener widget
-   (proxy [ActionListener] []
-     (actionPerformed [e]
-		      (fun)))))
+		      (proxy [ActionListener] []
+			(actionPerformed [e]
+					 (fun)))))
 
 (defn panel [& widget-layouts]
   (let [p (JPanel. (MigLayout.))]
